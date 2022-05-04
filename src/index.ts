@@ -1,1 +1,1 @@
-import './RecorderFactory';
+import "./recorderManager/RecorderManagerFactory";

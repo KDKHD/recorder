@@ -1,6 +1,6 @@
-import Recorder from "./Recorder";
+import Recorder from "./RecorderManager";
 
-class RecorderFactory {
+class RecorderManagerFactory {
   static instance: Recorder | undefined;
 
   static getInstance(): Recorder {
@@ -12,4 +12,6 @@ class RecorderFactory {
   }
 }
 
-export default RecorderFactory;
+RecorderManagerFactory.getInstance();
+
+export default RecorderManagerFactory;
