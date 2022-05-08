@@ -1,24 +1,24 @@
 <!DOCTYPE html>
 <html lang="en">
-  
-<head>
+  <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <link rel="stylesheet" href="style.css" />
     <title>Recorder</title>
   </head>
-  
+
   <body>
     <main>
+      <button id="refresh" class="unselectable">Refresh</button>
+      <pre id="json"></pre>
     </main>
- 
+
     <script src="https://unpkg.com/systemjs@6.11.0/dist/s.js"></script>
-    <script src="https://unpkg.com/systemjs@6.11.0/dist/extras/named-register.js"></script> 
+    <script src="https://unpkg.com/systemjs@6.11.0/dist/extras/named-register.js"></script>
 
     <script src="build/bundle.js"></script>
     <script type="module">
-      System.import('index');
+      System.import("index");
     </script>
-
   </body>
 </html>

@@ -21,6 +21,13 @@ class RecorderManager {
 
     this.eventListener.registerEventListenersForPlatform();
   }
+
+  getData = () => {
+    return {
+      keyboard: this.keyboardRecorder.getData(),
+      mouse: this.mouseRecorder.getData(),
+    };
+  };
 }
 
 export default RecorderManager;

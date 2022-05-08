@@ -143,7 +143,6 @@ System.register("keyboard/KeyboardRecorder", ["recorderManager/Recorder", "keybo
                                 .forEach((keyPress) => keyPress.keyUp(e));
                         }
                         this.calculateSeekTimes();
-                        console.table(this.getKeyboardPattern());
                     };
                     this.keypress = () => { };
                     this.keyPressHistory = new Array();
@@ -164,6 +163,12 @@ System.register("keyboard/KeyboardRecorder", ["recorderManager/Recorder", "keybo
                             }
                         }
                     });
+                }
+                clearHistory() {
+                    this.keyPressHistory = new Array();
+                }
+                getData() {
+                    return this.getKeyboardPattern();
                 }
             };
             exports_5("default", KeyboardRecorder);
@@ -194,10 +199,28 @@ System.register("keyboard/KeyboardRecorderFactory", ["keyboard/KeyboardRecorder"
         }
     };
 });
-System.register("mouse/MouseMove", [], function (exports_7, context_7) {
+System.register("util/midpoint", [], function (exports_7, context_7) {
+    "use strict";
+    var findMidpoint;
+    var __moduleName = context_7 && context_7.id;
+    return {
+        setters: [],
+        execute: function () {
+            findMidpoint = (a, b) => {
+                const [x1, y1] = a;
+                const [x2, y2] = b;
+                const midpointX = (x1 + x2) / 2;
+                const midpointY = (y1 + y2) / 2;
+                return [midpointX, midpointY];
+            };
+            exports_7("default", findMidpoint);
+        }
+    };
+});
+System.register("mouse/MouseMove", [], function (exports_8, context_8) {
     "use strict";
     var MouseMove;
-    var __moduleName = context_7 && context_7.id;
+    var __moduleName = context_8 && context_8.id;
     return {
         setters: [],
         execute: function () {
@@ -225,27 +248,36 @@ System.register("mouse/MouseMove", [], function (exports_7, context_7) {
                     }
                 }
                 getStartCoordinates() {
-                    return {
-                        x: this.startScreenX,
-                        y: this.startScreenY,
-                    };
+                    if (!(this.startScreenX && this.startScreenY)) {
+                        return undefined;
+                    }
+                    return [this.startScreenX, this.startScreenY];
+                }
+                getEndCoordinates() {
+                    if (!(this.endScreenX && this.endScreenY)) {
+                        return undefined;
+                    }
+                    return [this.endScreenX, this.endScreenY];
                 }
                 getData() {
                     return {
-                        moveCoordinates: `[(${this.startScreenX},${this.startScreenY}), (${this.endScreenX},${this.endScreenY})]`,
+                        startScreen: this.getStartCoordinates(),
+                        endScreen: this.getEndCoordinates(),
                         speed: this.speed,
                         velocity: this.velocity,
+                        intervalStartTime: this.intervalStartTime,
+                        intervalEndTime: this.intervalEndTime
                     };
                 }
             };
-            exports_7("default", MouseMove);
+            exports_8("default", MouseMove);
         }
     };
 });
-System.register("mouse/MouseRecorder", ["recorderManager/Recorder", "mouse/MouseMove"], function (exports_8, context_8) {
+System.register("mouse/MouseRecorder", ["recorderManager/Recorder", "mouse/MouseMove"], function (exports_9, context_9) {
     "use strict";
     var Recorder_2, MouseMove_1, INTERVAL, MouseRecorder;
-    var __moduleName = context_8 && context_8.id;
+    var __moduleName = context_9 && context_9.id;
     return {
         setters: [
             function (Recorder_2_1) {
@@ -256,7 +288,7 @@ System.register("mouse/MouseRecorder", ["recorderManager/Recorder", "mouse/Mouse
             }
         ],
         execute: function () {
-            INTERVAL = 1000;
+            INTERVAL = 100;
             MouseRecorder = class MouseRecorder extends Recorder_2.default {
                 constructor() {
                     super();
@@ -312,15 +344,18 @@ System.register("mouse/MouseRecorder", ["recorderManager/Recorder", "mouse/Mouse
                 getMousePattern() {
                     return this.mouseMoveHistory.map((mouseMove) => mouseMove.getData());
                 }
+                getData() {
+                    return this.getMousePattern();
+                }
             };
-            exports_8("default", MouseRecorder);
+            exports_9("default", MouseRecorder);
         }
     };
 });
-System.register("mouse/MouseRecorderFactory", ["mouse/MouseRecorder"], function (exports_9, context_9) {
+System.register("mouse/MouseRecorderFactory", ["mouse/MouseRecorder"], function (exports_10, context_10) {
     "use strict";
     var MouseRecorder_1, MouseRecorderFactory;
-    var __moduleName = context_9 && context_9.id;
+    var __moduleName = context_10 && context_10.id;
     return {
         setters: [
             function (MouseRecorder_1_1) {
@@ -337,14 +372,14 @@ System.register("mouse/MouseRecorderFactory", ["mouse/MouseRecorder"], function 
                     return this.instance;
                 }
             };
-            exports_9("default", MouseRecorderFactory);
+            exports_10("default", MouseRecorderFactory);
         }
     };
 });
-System.register("scroll/ScrollRecorder", [], function (exports_10, context_10) {
+System.register("scroll/ScrollRecorder", [], function (exports_11, context_11) {
     "use strict";
     var ScrollRecorder;
-    var __moduleName = context_10 && context_10.id;
+    var __moduleName = context_11 && context_11.id;
     return {
         setters: [],
         execute: function () {
@@ -353,14 +388,14 @@ System.register("scroll/ScrollRecorder", [], function (exports_10, context_10) {
                     this.scroll = (e) => { };
                 }
             };
-            exports_10("default", ScrollRecorder);
+            exports_11("default", ScrollRecorder);
         }
     };
 });
-System.register("scroll/ScrollRecorderFactory", ["scroll/ScrollRecorder"], function (exports_11, context_11) {
+System.register("scroll/ScrollRecorderFactory", ["scroll/ScrollRecorder"], function (exports_12, context_12) {
     "use strict";
     var ScrollRecorder_1, ScrollRecorderFactory;
-    var __moduleName = context_11 && context_11.id;
+    var __moduleName = context_12 && context_12.id;
     return {
         setters: [
             function (ScrollRecorder_1_1) {
@@ -377,14 +412,14 @@ System.register("scroll/ScrollRecorderFactory", ["scroll/ScrollRecorder"], funct
                     return this.instance;
                 }
             };
-            exports_11("default", ScrollRecorderFactory);
+            exports_12("default", ScrollRecorderFactory);
         }
     };
 });
-System.register("eventListenerManager/EventListenerManager", ["device/Device", "device/DeviceFactory", "keyboard/KeyboardRecorderFactory", "mouse/MouseRecorderFactory", "scroll/ScrollRecorderFactory"], function (exports_12, context_12) {
+System.register("eventListenerManager/EventListenerManager", ["device/Device", "device/DeviceFactory", "keyboard/KeyboardRecorderFactory", "mouse/MouseRecorderFactory", "scroll/ScrollRecorderFactory"], function (exports_13, context_13) {
     "use strict";
     var Device_2, DeviceFactory_1, KeyboardRecorderFactory_1, MouseRecorderFactory_1, ScrollRecorderFactory_1, keyboardRecorder, mouseRecorder, scrollRecorder, EventListenerName, eventListeners, desktopEventListenerNames, platformEventListeners, EventListenerManager;
-    var __moduleName = context_12 && context_12.id;
+    var __moduleName = context_13 && context_13.id;
     return {
         setters: [
             function (Device_2_1) {
@@ -431,7 +466,8 @@ System.register("eventListenerManager/EventListenerManager", ["device/Device", "
             ]);
             EventListenerManager = class EventListenerManager {
                 constructor() {
-                    this.getEventListenersByPlatform = (platform) => {
+                    this.getEventListenersByPlatform = () => {
+                        const platform = this.device.getPlatform();
                         const platformEventListenerNames = platformEventListeners.get(platform);
                         if (platformEventListenerNames === undefined) {
                             throw new Error(`No event listeners for ${platform}`);
@@ -446,7 +482,7 @@ System.register("eventListenerManager/EventListenerManager", ["device/Device", "
                         if (this.device.getPlatform == null) {
                             throw new Error("Platform is not defined");
                         }
-                        const eventListeners = this.getEventListenersByPlatform(this.device.getPlatform());
+                        const eventListeners = this.getEventListenersByPlatform();
                         this.registerEventListeners(eventListeners);
                     };
                     this.registerEventListeners = (eventListeners) => {
@@ -460,14 +496,14 @@ System.register("eventListenerManager/EventListenerManager", ["device/Device", "
                     this.device = DeviceFactory_1.default.getInstance();
                 }
             };
-            exports_12("default", EventListenerManager);
+            exports_13("default", EventListenerManager);
         }
     };
 });
-System.register("eventListenerManager/EventListenerManagerFactory", ["eventListenerManager/EventListenerManager"], function (exports_13, context_13) {
+System.register("eventListenerManager/EventListenerManagerFactory", ["eventListenerManager/EventListenerManager"], function (exports_14, context_14) {
     "use strict";
     var EventListenerManager_1, EventListenerManagerFactory;
-    var __moduleName = context_13 && context_13.id;
+    var __moduleName = context_14 && context_14.id;
     return {
         setters: [
             function (EventListenerManager_1_1) {
@@ -484,14 +520,14 @@ System.register("eventListenerManager/EventListenerManagerFactory", ["eventListe
                     return this.instance;
                 }
             };
-            exports_13("default", EventListenerManagerFactory);
+            exports_14("default", EventListenerManagerFactory);
         }
     };
 });
-System.register("recorderManager/RecorderManager", ["device/DeviceFactory", "eventListenerManager/EventListenerManagerFactory", "keyboard/KeyboardRecorderFactory", "mouse/MouseRecorderFactory"], function (exports_14, context_14) {
+System.register("recorderManager/RecorderManager", ["device/DeviceFactory", "eventListenerManager/EventListenerManagerFactory", "keyboard/KeyboardRecorderFactory", "mouse/MouseRecorderFactory"], function (exports_15, context_15) {
     "use strict";
     var DeviceFactory_2, EventListenerManagerFactory_1, KeyboardRecorderFactory_2, MouseRecorderFactory_2, RecorderManager;
-    var __moduleName = context_14 && context_14.id;
+    var __moduleName = context_15 && context_15.id;
     return {
         setters: [
             function (DeviceFactory_2_1) {
@@ -510,6 +546,12 @@ System.register("recorderManager/RecorderManager", ["device/DeviceFactory", "eve
         execute: function () {
             RecorderManager = class RecorderManager {
                 constructor() {
+                    this.getData = () => {
+                        return {
+                            keyboard: this.keyboardRecorder.getData(),
+                            mouse: this.mouseRecorder.getData(),
+                        };
+                    };
                     this.device = DeviceFactory_2.default.getInstance();
                     this.eventListener = EventListenerManagerFactory_1.default.getInstance();
                     this.keyboardRecorder = KeyboardRecorderFactory_2.default.getInstance();
@@ -517,14 +559,14 @@ System.register("recorderManager/RecorderManager", ["device/DeviceFactory", "eve
                     this.eventListener.registerEventListenersForPlatform();
                 }
             };
-            exports_14("default", RecorderManager);
+            exports_15("default", RecorderManager);
         }
     };
 });
-System.register("recorderManager/RecorderManagerFactory", ["recorderManager/RecorderManager"], function (exports_15, context_15) {
+System.register("recorderManager/RecorderManagerFactory", ["recorderManager/RecorderManager"], function (exports_16, context_16) {
     "use strict";
-    var RecorderManager_1, RecorderManagerFactory;
-    var __moduleName = context_15 && context_15.id;
+    var RecorderManager_1, RecorderManagerFactory, updateContent;
+    var __moduleName = context_16 && context_16.id;
     return {
         setters: [
             function (RecorderManager_1_1) {
@@ -541,14 +583,20 @@ System.register("recorderManager/RecorderManagerFactory", ["recorderManager/Reco
                     return this.instance;
                 }
             };
-            RecorderManagerFactory.getInstance();
-            exports_15("default", RecorderManagerFactory);
+            updateContent = () => {
+                const container = document === null || document === void 0 ? void 0 : document.getElementById("json");
+                if (container) {
+                    container.textContent = JSON.stringify(RecorderManagerFactory.getInstance().getData(), undefined, 2);
+                }
+            };
+            setInterval(updateContent, 1000);
+            exports_16("default", RecorderManagerFactory);
         }
     };
 });
-System.register("index", ["recorderManager/RecorderManagerFactory"], function (exports_16, context_16) {
+System.register("index", ["recorderManager/RecorderManagerFactory"], function (exports_17, context_17) {
     "use strict";
-    var __moduleName = context_16 && context_16.id;
+    var __moduleName = context_17 && context_17.id;
     return {
         setters: [
             function (_1) {
@@ -558,9 +606,9 @@ System.register("index", ["recorderManager/RecorderManagerFactory"], function (e
         }
     };
 });
-System.register("eventListenerManager/EventListenerManager.test", [], function (exports_17, context_17) {
+System.register("eventListenerManager/EventListenerManager.test", [], function (exports_18, context_18) {
     "use strict";
-    var __moduleName = context_17 && context_17.id;
+    var __moduleName = context_18 && context_18.id;
     return {
         setters: [],
         execute: function () {

@@ -12,6 +12,21 @@ class RecorderManagerFactory {
   }
 }
 
-RecorderManagerFactory.getInstance();
+const updateContent = () => {
+  const container = document?.getElementById("json");
+  if (container) {
+    container.textContent = JSON.stringify(
+      RecorderManagerFactory.getInstance().getData(),
+      undefined,
+      2
+    );
+  }
+};
+
+setInterval(updateContent, 1000);
+// const button = document.getElementById("refresh");
+// if (button) {
+//   button.onclick = updateContent;
+// }
 
 export default RecorderManagerFactory;

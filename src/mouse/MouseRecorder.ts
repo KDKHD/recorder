@@ -1,7 +1,7 @@
 import Recorder from "../recorderManager/Recorder";
 import MouseMove from "./MouseMove";
 
-const INTERVAL = 1000;
+const INTERVAL = 100;
 
 class MouseRecorder extends Recorder {
   xDistance = 0;
@@ -69,8 +69,8 @@ class MouseRecorder extends Recorder {
     return this.mouseMoveHistory.map((mouseMove) => mouseMove.getData());
   }
 
-  clearHistory() {
-    this.mouseMoveHistory = new Array<MouseMove>();
+  getData() {
+    return this.getMousePattern();
   }
 }
 

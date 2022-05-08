@@ -28,7 +28,6 @@ class KeyboardRecorder extends Recorder {
         .forEach((keyPress) => keyPress.keyUp(e));
     }
     this.calculateSeekTimes();
-    console.table(this.getKeyboardPattern());
   };
 
   keypress = () => {};
@@ -55,6 +54,10 @@ class KeyboardRecorder extends Recorder {
 
   clearHistory() {
     this.keyPressHistory = new Array<KeyPress>();
+  }
+
+  getData() {
+    return this.getKeyboardPattern();
   }
 }
 

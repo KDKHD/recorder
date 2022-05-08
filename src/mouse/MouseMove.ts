@@ -1,3 +1,5 @@
+import findMidpoint from "../util/midpoint";
+
 class MouseMove {
   xDistance: number = 0;
   yDistance: number = 0;
@@ -43,23 +45,28 @@ class MouseMove {
     }
   }
 
-  getStartCoordinates() {
-    return {
-      x: this.startScreenX,
-      y: this.startScreenY,
-    };
+  getStartCoordinates(): [number, number] | undefined {
+    if (!(this.startScreenX && this.startScreenY)) {
+      return undefined;
+    }
+    return [this.startScreenX, this.startScreenY];
+  }
+
+  getEndCoordinates(): [number, number] | undefined {
+    if (!(this.endScreenX && this.endScreenY)) {
+      return undefined;
+    }
+    return [this.endScreenX, this.endScreenY];
   }
 
   getData() {
     return {
-      coordinates: {
-        startX: this.startScreenX,
-        startY: this.startScreenY,
-        endX: this.endScreenX,
-        endY: this.endScreenY,
-      },
+      startScreen: this.getStartCoordinates(),
+      endScreen: this.getEndCoordinates(),
       speed: this.speed,
       velocity: this.velocity,
+      intervalStartTime: this.intervalStartTime,
+      intervalEndTime: this.intervalEndTime
     };
   }
 }
